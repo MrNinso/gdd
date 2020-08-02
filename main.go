@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/cheggaaa/pb/v3"
-	. "github.com/logrusorgru/aurora"
+	"github.com/logrusorgru/aurora"
 	"github.com/urfave/cli/v2"
 	"log"
 	"math"
@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-type MyFile struct {
+type tMyFile struct {
 	*os.File
 	size int64
 }
 
-var HideBar bool
+var mHideBar bool
 
-var Notation = []string{"", "k", "m", "g", "t", "p", "e", "z" }
+var mNotation = []string{"", "k", "m", "g", "t", "p", "e", "z"}
 
 func main() {
 	app := cli.NewApp()
@@ -27,37 +27,37 @@ func main() {
 	app.EnableBashCompletion = true
 	app.Usage = "A dd but in GOLANG !!"
 
-	app.Flags = []cli.Flag {
+	app.Flags = []cli.Flag{
 		&cli.PathFlag{
 			Name:      "input",
-			Aliases:   []string{ "i" },
+			Aliases:   []string{"i"},
 			Usage:     "Input File",
 			Required:  true,
 			TakesFile: true,
 		},
 		&cli.PathFlag{
 			Name:      "output",
-			Aliases:   []string{ "o" },
+			Aliases:   []string{"o"},
 			Usage:     "Output File",
 			Required:  true,
 			TakesFile: true,
 		},
 		&cli.BoolFlag{
 			Name:        "hide-progress",
-			Aliases:     []string{ "hp" },
+			Aliases:     []string{"hp"},
 			Usage:       "Remove Progress bar",
-			Destination: &HideBar,
+			Destination: &mHideBar,
 			HasBeenSet:  false,
 		},
 		&cli.StringFlag{
 			Name:    "block-size",
-			Aliases: []string { "bs" },
+			Aliases: []string{"bs"},
 			Usage:   "Size of copyFile2File block in bytes",
 			Value:   "512",
 		},
 		&cli.StringFlag{
 			Name:    "block-count",
-			Aliases: []string { "count", "c" },
+			Aliases: []string{"count", "c"},
 			Usage:   "Size of copyFile2File block in bytes",
 			Value:   "-1",
 		},
@@ -85,7 +85,7 @@ func main() {
 		var pos int64 = 0
 		var count int64 = 0
 
-		if !HideBar {
+		if !mHideBar {
 			if blockCount != -1 {
 				bar = pb.Full.Start64(blockCount)
 			} else {
@@ -127,8 +127,8 @@ func main() {
 	}
 }
 
-func copyFile2File(input, output *MyFile, block *[]byte, pos *int64) (bool) {
-	c,_ := input.ReadAt(*block, *pos)
+func copyFile2File(input, output *tMyFile, block *[]byte, pos *int64) bool {
+	c, _ := input.ReadAt(*block, *pos)
 
 	if c == 0 {
 		return false
@@ -149,10 +149,10 @@ func copyFile2File(input, output *MyFile, block *[]byte, pos *int64) (bool) {
 func getInt64(s string) int64 {
 	m := 0
 	n := strings.ToLower(s)
-	for i := 1; i < len(Notation); i++ {
-		if strings.Contains(n, Notation[i]) {
-			m = i*3
-			n = strings.Replace(n, Notation[i], "", -1)
+	for i := 1; i < len(mNotation); i++ {
+		if strings.Contains(n, mNotation[i]) {
+			m = i * 3
+			n = strings.Replace(n, mNotation[i], "", -1)
 			break
 		}
 	}
@@ -172,9 +172,9 @@ func getInt64(s string) int64 {
 	return result
 }
 
-func getFile(path string, isOutput bool) (file *MyFile) {
+func getFile(path string, isOutput bool) (file *tMyFile) {
 	info, err := os.Stat(path)
-	if os.IsNotExist(err) && !isOutput  {
+	if os.IsNotExist(err) && !isOutput {
 		logErrorFatal(err)
 		os.Exit(404)
 	}
@@ -183,7 +183,7 @@ func getFile(path string, isOutput bool) (file *MyFile) {
 	var size int64
 
 	if isOutput {
-		f, err = os.OpenFile(path, os.O_WRONLY | os.O_CREATE, 0666)
+		f, err = os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
 
 		if f == nil {
 			logErrorFatal("cant open or create the file", path)
@@ -208,13 +208,13 @@ func getFile(path string, isOutput bool) (file *MyFile) {
 		logErrorFatal(err)
 		os.Exit(1)
 	}
-	
-	return &MyFile{
+
+	return &tMyFile{
 		f,
 		size,
 	}
 }
 
 func logErrorFatal(v ...interface{}) {
-	log.Fatal(Red(Bold(v)))
+	log.Fatal(aurora.Red(aurora.Bold(v)))
 }
