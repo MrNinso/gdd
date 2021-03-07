@@ -27,6 +27,15 @@ func main() {
 	app.EnableBashCompletion = true
 	app.Usage = "A dd but in GOLANG !!"
 
+	app.CustomAppHelpTemplate =
+		`NAME:
+	{{.Name}} - {{.Usage}}
+USAGE:
+	{{.HelpName}} -i <file> -o <file> [options] 
+OPTIONS:
+	{{range .VisibleFlags}}{{.}}
+	{{end}}
+`
 	app.Flags = []cli.Flag{
 		&cli.PathFlag{
 			Name:      "input",
@@ -52,13 +61,13 @@ func main() {
 		&cli.StringFlag{
 			Name:    "block-size",
 			Aliases: []string{"bs"},
-			Usage:   "Size of copyFile2File block in bytes",
+			Usage:   "Size of blocks in bytes",
 			Value:   "512",
 		},
 		&cli.StringFlag{
 			Name:    "block-count",
 			Aliases: []string{"count", "c"},
-			Usage:   "Size of copyFile2File block in bytes",
+			Usage:   "cont of blocks in bytes",
 			Value:   "-1",
 		},
 	}
@@ -69,8 +78,13 @@ func main() {
 
 		var bar *pb.ProgressBar
 
-		defer input.Close()
-		defer output.Close()
+		defer func() {
+			_ = input.Close()
+		}()
+
+		defer func() {
+			_ = output.Close()
+		}()
 
 		block := make([]byte, getInt64(context.String("block-size")))
 		bc := context.String("block-count")

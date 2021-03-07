@@ -4,22 +4,16 @@ This is a dd copy in golang
 
 ````
 NAME:
-   gdd - A dd but in GOLANG !!
-
+    gdd - A dd but in GOLANG !!
 USAGE:
-   gdd [global options] command [command options] [arguments...]
-
-COMMANDS:
-   help, h  Shows a list of commands or help for one command
-
-GLOBAL OPTIONS:
-   --input value, -i value                       Input File
-   --output value, -o value                      Output File
-   --hide-progress, --hp                         Remove Progress bar (default: false)
-   --block-size value, --bs value                Size of copyFile2File block in bytes (default: "512")
-   --block-count value, --count value, -c value  Size of copyFile2File block in bytes (default: "-1")
-   --help, -h                                    show help (default: false)
-
+    gdd -i <file> -o <file> [options] 
+OPTIONS:
+    --input value, -i value                       Input File
+    --output value, -o value                      Output File
+    --hide-progress, --hp                         Remove Progress bar (default: false)
+    --block-size value, --bs value                Size of blocks in bytes (default: "512")
+    --block-count value, --count value, -c value  cont of blocks in bytes (default: "-1")
+    --help, -h                                   show help (default: false)
 ````
 
 ## Build
